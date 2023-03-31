@@ -32,7 +32,19 @@ class AppFixtures extends Fixture
                 'stock' => 'Disponible',
                 'genre' => 'Roman historique',
                 'format' => 'Broché',
+            ],
+            [
+                'title' => 'Le Comte de Monte-Cristo',
+                'description' => 'Un roman d\'aventure et de vengeance',
+                'author' => 'Alexandre Dumas',
+                'price' => 12.50,
+                'image' => '...',
+                'isbn' => '9782070416705',
+                'stock' => 'Disponible',
+                'genre' => 'Roman d\'aventure',
+                'format' => 'Poche',
             ]
+          
         ];
 
         foreach ($books as $bookData) {
