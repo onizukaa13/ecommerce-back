@@ -1,10 +1,10 @@
 <?php
 
-
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,26 +15,47 @@ class BookController extends AbstractController
     /**
      * @Route("/", name="homepage")
      * @Route("/books", name="book_list", methods={"GET"})
+     */ /**
+     * @Route("/books/{id}", name="book_show", methods={"GET"})
      */
-    public function index(EntityManagerInterface $entityManager): Response
+    public function show(Book $book): JsonResponse
     {
+        return $this->json($book);
+    }
+    public function index(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $criteria = $request->query->all();
+
         // Récupération des livres selon les critères souhaités
-        $books = $entityManager->createQueryBuilder()
+        $queryBuilder = $entityManager->createQueryBuilder()
             ->select('b')
             ->from(Book::class, 'b')
-            ->where('b.prix < :prixMax')
-            ->andWhere('b.auteur = :auteur')
-            ->andWhere('b.genre = :genre')
-            ->andWhere('b.stock > 0')
-            ->orderBy('b.nbVentes', 'DESC')
-            ->setParameter('prixMax', 50) // exemple de prix maximum souhaité
-            ->setParameter('auteur', 'Tolkien') // exemple d'auteur souhaité
-            ->setParameter('genre', 'Fantasy') // exemple de genre souhaité
+            ->where('b.stock > 0');
+
+        if (isset($criteria['auteur'])) {
+            $queryBuilder->andWhere('b.auteur LIKE :auteur')
+                ->setParameter('auteur', '%' . $criteria['auteur'] . '%');
+        }
+
+        if (isset($criteria['titre'])) {
+            $queryBuilder->andWhere('b.titre LIKE :titre')
+                ->setParameter('titre', '%' . $criteria['titre'] . '%');
+        }
+
+        if (isset($criteria['genre'])) {
+            $queryBuilder->andWhere('b.genre = :genre')
+                ->setParameter('genre', $criteria['genre']);
+        }
+
+        if (isset($criteria['prixMax'])) {
+            $queryBuilder->andWhere('b.prix < :prixMax')
+                ->setParameter('prixMax', $criteria['prixMax']);
+        }
+
+        $books = $queryBuilder->orderBy('b.nbVentes', 'DESC')
             ->getQuery()
             ->getResult();
-        
+
         return $this->json($books);
     }
-
-    
 }
