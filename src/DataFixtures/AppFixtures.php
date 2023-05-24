@@ -35,15 +35,41 @@ class AppFixtures extends Fixture
             ],
             [
                 'title' => 'Le Comte de Monte-Cristo',
-                'description' => 'Un roman d\'aventure et de vengeance',
+                'description' => "Un roman d'aventure et de vengeance",
                 'author' => 'Alexandre Dumas',
                 'price' => 12.50,
                 'image' => '...',
                 'isbn' => '9782070416705',
                 'stock' => 'Disponible',
-                'genre' => 'Roman d\'aventure',
+                'genre' => "Roman d'aventure",
                 'format' => 'Poche',
-            ]
+            ],
+
+            [
+                'title' =>'Harry Potter',
+                'description' => 'Un roman fantastique rempli de magie et d\aventure',
+                'author' => 'J.K. Rowling',
+                'price' =>  15.99,
+                'image' => '...',
+                'isbn' => '9782070584622',
+                'stock' => 'Disponible',
+                'genre' => 'Roman fantastique',
+                'format' => 'Broché',
+            ],
+
+            [
+                'title' => 'Cherub, Trafic',
+                'description' => 'Un roman d\'espionnage captivant',
+                'author' => 'Robert Muchamore',
+                'price' => 10.99,
+                'image' => '...',
+                'isbn' => '9782203133158',
+                'stock' => 'Disponible',
+                'genre' => 'Roman d\espionnage',
+                'format' => 'Poche',
+            ],
+
+
           
         ];
 
