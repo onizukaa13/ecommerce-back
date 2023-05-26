@@ -2,88 +2,61 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\UserRepository;
+use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: '`user`')]
-class User
+#[ApiResource]
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $nom = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $prenom = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $adresseFacturation = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $adresseLivraison = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
-    #[ORM\Column(nullable: true)]
-    private array $password = [];
-
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column]
     private array $roles = [];
+
+    #[ORM\Column]
+    private ?string $password = null;
+
+    #[ORM\Column]
+    private ?string $name = null;
+
+    #[ORM\Column]
+    private ?string $firstname = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getNom(): ?string
+    public function getName(): ?string
     {
-        return $this->nom;
+        return $this->name;
     }
 
-    public function setNom(string $nom): self
+    public function setName(string $name): self
     {
-        $this->nom = $nom;
+        $this->name = $name;
 
         return $this;
     }
 
-    public function getPrenom(): ?string
+    public function getFirstName(): ?string
     {
-        return $this->prenom;
+        return $this->firstname;
     }
 
-    public function setPrenom(?string $prenom): self
+    public function setFirstName(string $firstname): self
     {
-        $this->prenom = $prenom;
-
-        return $this;
-    }
-
-    public function getAdresseFacturation(): ?string
-    {
-        return $this->adresseFacturation;
-    }
-
-    public function setAdresseFacturation(string $adresseFacturation): self
-    {
-        $this->adresseFacturation = $adresseFacturation;
-
-        return $this;
-    }
-
-    public function getAdresseLivraison(): ?string
-    {
-        return $this->adresseLivraison;
-    }
-
-    public function setAdresseLivraison(?string $adresseLivraison): self
-    {
-        $this->adresseLivraison = $adresseLivraison;
+        $this->firstname = $firstname;
 
         return $this;
     }
@@ -93,34 +66,48 @@ class User
         return $this->email;
     }
 
-    public function setEmail(?string $email): self
+    public function setEmail(string $email): self
     {
         $this->email = $email;
 
         return $this;
     }
 
-    public function getPassword(): array
+    public function getUserIdentifier(): string
     {
-        return $this->password;
-    }
-
-    public function setPassword(?array $password): self
-    {
-        $this->password = $password;
-
-        return $this;
+        return (string) $this->email;
     }
 
     public function getRoles(): array
     {
-        return $this->roles;
+        $roles = $this->roles;
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
     }
 
-    public function setRoles(?array $roles): self
+    public function setRoles(array $roles): self
     {
         $this->roles = $roles;
 
         return $this;
+    }
+
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): self
+    {
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        $this->password = $hashedPassword;
+
+        return $this;
+    }
+
+    public function eraseCredentials()
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
     }
 }

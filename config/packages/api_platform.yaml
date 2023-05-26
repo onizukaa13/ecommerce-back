@@ -2,3 +2,19 @@ api_platform:
   formats:
     json:
       mime_types: ['application/json']
+  # Enable the Swagger documentation and export.
+    html:
+     mime_types: ['text/html']
+  enable_swagger: true
+
+  # Enable Swagger UI.
+  enable_swagger_ui: true
+
+  # Enable ReDoc.
+  enable_re_doc: true
+
+  # Enable the entrypoint.
+  enable_entrypoint: true
+
+  # Enable the docs.
+  enable_docs: true

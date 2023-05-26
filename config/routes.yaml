@@ -8,3 +8,5 @@ app_book_list:
     defaults:
         _api_resource_class: App\Entity\Book
         _api_collection_operation_name: get
+api_login_check:
+    path: /api/login_check
