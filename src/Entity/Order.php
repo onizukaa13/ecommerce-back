@@ -2,9 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\OrderRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\OrderRepository;
+use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
+#[ApiResource(
+    normalizationContext: ["groups" => ["order:write"]],
+    denormalizationContext: ["groups" => ["order:write"]]
+)]
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
 #[ORM\Table(name: '`order`')]
 class Order
@@ -12,17 +18,28 @@ class Order
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["order:write"])]
     private ?int $id = null;
 
     #[ORM\Column(type: 'datetime')]
+    #[Groups(["order:write"])]
     private \DateTimeInterface $orderDate;
 
+    #[Groups(["order:write"])]
     #[ORM\Column(type: 'string', unique: true)]
     private string $orderNumber;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: false)]
-    private User $user;
+    #[ORM\ManyToOne]
+    #[Groups(["order:write"])]
+    private ?User $user = null;
+
+
+
+    public function __construct()
+    {
+        $this->orderDate = new \DateTime();
+        $this->orderNumber = $this->generateOrderNumber(); // Génère un numéro de commande unique
+    }
 
     public function getId(): ?int
     {
@@ -51,14 +68,28 @@ class Order
         return $this;
     }
 
-    public function getUser(): User
+ 
+
+    private function generateOrderNumber(): string
+    {
+        // Logique pour générer un numéro de commande unique
+        // Par exemple, vous pouvez combiner la date actuelle avec un identifiant unique
+
+        $timestamp = time();
+        $uniqueId = uniqid();
+
+        return date('YmdHis', $timestamp) . '-' . $uniqueId;
+    }
+
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function setUser(User $user): self
+    public function setUser(?User $user): self
     {
         $this->user = $user;
+
         return $this;
     }
 }
