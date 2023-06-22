@@ -6,42 +6,68 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\BookRepository;
 use ApiPlatform\Metadata\ApiResource;
+use App\Repository\OrderlineRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ["groups" => ["book:read"]],
+    denormalizationContext: ["groups" => ["book:write"]]
+)]
 class Book
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["book:read","book:write","orderline:read","order:read",])]
     private ?int $id = null;
-
+    
+    #[Groups(["book:read","book:write","orderline:read","orderline:write","order:read","order:write"])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $titre = null;
 
+    #[Groups(["book:read","book:write","orderline:read","orderline:write","order:read","order:write"])]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $author = null;
 
+    #[Groups(["book:read","book:write","orderline:read","orderline:write","order:read","order:write"])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
+    #[Groups(["book:read","book:write","orderline:read","orderline:write","order:read","order:write"])]
     #[ORM\Column]
     private ?string $image = null;
 
+    #[Groups(["book:read","book:write","orderline:read","orderline:write","order:read","order:write"])]
     #[ORM\Column]
     private ?int $prix = null;
 
+    #[Groups(["book:read","book:write","orderline:read","orderline:write","order:read","order:write"])]
     #[ORM\Column(length: 13, nullable: true)]
     private ?string $stock = null;
 
+    #[Groups(["book:read","book:write","orderline:read","orderline:write","order:read","order:write"])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $isbn = null;
 
+    #[Groups(["book:read","book:write","orderline:read","orderline:write","order:read","order:write"])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $genre = null;
 
+    #[Groups(["book:read","book:write","orderline:read","orderline:write","order:read","order:write"])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $format = null;
+
+    #[Groups(["book:read","book:write","order:read","order:write"])]
+    #[ORM\OneToMany(mappedBy: 'book', targetEntity: Orderline::class, cascade: ['persist'])]
+    private Collection $orderlines;
+
+    public function __construct()
+    {
+        $this->orderlines = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -152,6 +178,32 @@ class Book
     public function setFormat(?string $format): self
     {
         $this->format = $format;
+
+        return $this;
+    }
+
+    public function getOrderlines(): Collection
+    {
+        return $this->orderlines;
+    }
+
+    public function addOrderlines(Orderline $orderlines): self
+    {
+        if (!$this->orderlines->contains($orderlines)) {
+            $this->orderlines->add($orderlines);
+            $orderlines->setBook($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrderlines(Orderline $orderlines): self
+    {
+        if ($this->orderlines->removeElement($orderlines)) {
+            if ($orderlines->getBook() === $this) {
+                $orderlines->setBook(null);
+            }
+        }
 
         return $this;
     }

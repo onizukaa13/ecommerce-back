@@ -2,35 +2,63 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ApiResource]
+#[ORM\Table(name: '`user`')]
+#[ApiResource(
+    normalizationContext: ["groups" => ["user:read"]],
+    denormalizationContext: ["groups" => ["user:write"]]
+)]
+#[ApiFilter(
+    SearchFilter::class,
+    properties: ["email" => "exact"]
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: 'integer')]
+    #[Groups(["user:read","user:write","order:read","orderline:read"])]
+    private $id;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Groups(["user:read","user:write","order:write", "order:read","orderline:read","orderline:write"])]
     private ?string $email = null;
 
     #[ORM\Column]
+    #[Groups(["user:read","user:write","order:write", "order:read","orderline:read","orderline:write"])]
     private array $roles = [];
 
-    #[ORM\Column]
-    private ?string $password = null;
+    #[ORM\Column(type:'string',length: 255, nullable: false)]
+    #[Groups(["user:read","user:write"])]
+    private $password;
 
     #[ORM\Column]
+    #[Groups(["user:read","user:write","order:write", "order:read","orderline:read","orderline:write"])]
     private ?string $name = null;
 
     #[ORM\Column]
+    #[Groups(["user:read","user:write","order:write", "order:read","orderline:read","orderline:write"])]
     private ?string $firstname = null;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Order::class, cascade: ['persist'])]
+    #[Groups(["user:read","user:write","orderline:read","orderline:write"])]
+    private Collection $orders;
+
+    public function __construct()
+    {
+        $this->orders = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -93,6 +121,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    /**
+     * @see PasswordAuthenticatedUserInterface
+     */
     public function getPassword(): string
     {
         return $this->password;
@@ -108,6 +139,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function eraseCredentials()
     {
-        // If you store any temporary, sensitive data on the user, clear it here
+    }
+
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Order $order): self
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders->add($order);
+            $order->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Order $order): self
+    {
+        if ($this->orders->removeElement($order)) {
+            // set the owning side to null (unless already changed)
+            if ($order->getUser() === $this) {
+                $order->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }
