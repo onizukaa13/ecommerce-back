@@ -8,8 +8,8 @@ use App\Repository\OrderlineRepository;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
-    normalizationContext: ["groups" => ["order:read"]],
-    denormalizationContext: ["groups" => ["order:write"]]
+    normalizationContext: ["groups" => ["orderline:read"]],
+    denormalizationContext: ["groups" => ["orderline:write"]]
 )]
 
 #[ORM\Entity(repositoryClass: OrderlineRepository::class)]
@@ -22,12 +22,12 @@ class Orderline
     #[Groups(["orderline:read","orderline:write","order:read"])]
     private ?int $id = null;
     
-    #[Groups(["orderline:read","orderline:write","order:read","order:write"])]
+    #[Groups(["orderline:write"])]
     #[ORM\ManyToOne(inversedBy:'orderlines',cascade:['persist'])]
     private ?Order $order = null;
    
     #[ORM\ManyToOne(inversedBy:'orderlines',cascade:['persist'])]
-    #[Groups(["orderline:write","orderline:read","order:read","order:write"])]
+    #[Groups(["orderline:write","orderline:read","order:read"])]
     private ?Book $book = null;
 
     #[Groups(["orderline:read","orderline:write","order:read","order:write"])]

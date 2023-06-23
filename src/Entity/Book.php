@@ -46,7 +46,7 @@ class Book
 
     #[Groups(["book:read","book:write","orderline:read","orderline:write","order:read","order:write"])]
     #[ORM\Column(length: 13, nullable: true)]
-    private ?string $stock = null;
+    private ?int $stock = null;
 
     #[Groups(["book:read","book:write","orderline:read","orderline:write","order:read","order:write"])]
     #[ORM\Column(length: 255, nullable: true)]
@@ -60,7 +60,7 @@ class Book
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $format = null;
 
-    #[Groups(["book:read","book:write","order:read","order:write"])]
+    #[Groups(["book:read","book:write","order:write"])]
     #[ORM\OneToMany(mappedBy: 'book', targetEntity: Orderline::class, cascade: ['persist'])]
     private Collection $orderlines;
 
@@ -134,12 +134,12 @@ class Book
         return $this;
     }
 
-    public function getStock(): ?string
+    public function getStock(): ?int
     {
         return $this->stock;
     }
 
-    public function setStock(?string $stock): self
+    public function setStock(?int $stock): self
     {
         $this->stock = $stock;
 

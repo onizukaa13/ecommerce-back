@@ -35,7 +35,7 @@ class Order
     #[Groups(["order:write","order:read","orderline:read","orderline:write"])]
     private ?User $user = null;
 
-    #[Groups(["order:write","orderline:read","orderline:write"])]
+    #[Groups(["order:write","orderline:write"])]
     #[ORM\OneToMany(mappedBy: 'order', targetEntity: Orderline::class, cascade: ['persist'])]
     private Collection $orderline;
 
