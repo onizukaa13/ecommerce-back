@@ -20,22 +20,22 @@ class Order
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["order:write","order:read","orderline:read"])]
+    #[Groups(["order:write", "order:read", "orderline:read"])]
     private ?int $id = null;
 
     #[ORM\Column(type: 'datetime')]
-    #[Groups(["order:write","order:read","orderline:read","orderline:write"])]
+    #[Groups(["order:write", "order:read", "orderline:read", "orderline:write"])]
     private \DateTimeInterface $orderDate;
 
-    #[Groups(["order:write","order:read","orderline:read","orderline:write"])]
+    #[Groups(["order:write", "order:read", "orderline:read", "orderline:write"])]
     #[ORM\Column(type: 'string', unique: true)]
     private string $orderNumber;
 
-    #[ORM\ManyToOne(inversedBy:'orders',cascade:['persist'])]
-    #[Groups(["order:write","order:read","orderline:read","orderline:write"])]
+    #[ORM\ManyToOne(inversedBy: 'orders', cascade: ['persist'])]
+    #[Groups(["order:write", "order:read", "orderline:read", "orderline:write"])]
     private ?User $user = null;
 
-    #[Groups(["order:write","orderline:write"])]
+    #[Groups(["order:write", "order:read", "orderline:write","orderline:read"])]
     #[ORM\OneToMany(mappedBy: 'order', targetEntity: Orderline::class, cascade: ['persist'])]
     private Collection $orderline;
 
@@ -73,7 +73,7 @@ class Order
         return $this;
     }
 
- 
+
 
     private function generateOrderNumber(): string
     {
@@ -87,7 +87,7 @@ class Order
     }
     /**
      * Get the value of user
-     */ 
+     */
     public function getUser()
     {
         return $this->user;
@@ -97,7 +97,7 @@ class Order
      * Set the value of user
      *
      * @return  self
-     */ 
+     */
     public function setUser($user)
     {
         $this->user = $user;
@@ -107,7 +107,7 @@ class Order
 
     /**
      * Get the value of orderline
-     */ 
+     */
     public function getOrderline()
     {
         return $this->orderline;
@@ -117,7 +117,7 @@ class Order
      * Set the value of orderline
      *
      * @return  self
-     */ 
+     */
     public function setOrderline($orderline)
     {
         $this->orderline = $orderline;
