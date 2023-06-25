@@ -37,11 +37,11 @@ class Order
 
     #[Groups(["order:write", "order:read", "orderline:write","orderline:read"])]
     #[ORM\OneToMany(mappedBy: 'order', targetEntity: Orderline::class, cascade: ['persist'])]
-    private Collection $orderline;
+    private  $orderlines;
 
     public function __construct()
     {
-        $this->orderline = new ArrayCollection();
+        $this->orderlines = new ArrayCollection();
         $this->orderDate = new \DateTime();
         $this->orderNumber = $this->generateOrderNumber(); // Génère un numéro de commande unique
     }
@@ -108,9 +108,9 @@ class Order
     /**
      * Get the value of orderline
      */
-    public function getOrderline()
+    public function getOrderlines()
     {
-        return $this->orderline;
+        return $this->orderlines;
     }
 
     /**
@@ -118,9 +118,29 @@ class Order
      *
      * @return  self
      */
-    public function setOrderline($orderline)
+    public function setOrderlines($orderlines)
     {
-        $this->orderline = $orderline;
+        $this->orderlines = $orderlines;
+
+        return $this;
+    }
+    public function addOrderline(Orderline $orderline): self
+    {
+        if (!$this->orderlines->contains($orderline)) {
+            $this->orderlines->add($orderline);
+            $orderline->setOrder($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrderline(Orderline $orderline): self
+    {
+        if ($this->orderlines->removeElement($orderline)) {
+            if ($orderline->getBook() === $this) {
+                $orderline->setOrder(null);
+            }
+        }
 
         return $this;
     }

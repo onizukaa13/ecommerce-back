@@ -21,46 +21,46 @@ class Book
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["book:read","book:write","orderline:read","order:read",])]
+    #[Groups(["book:read", "book:write", "orderline:read", "order:read",])]
     private ?int $id = null;
-    
-    #[Groups(["book:read","book:write","orderline:read","orderline:write","order:read","order:write"])]
+
+    #[Groups(["book:read", "book:write", "orderline:read", "orderline:write", "order:read", "order:write"])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $titre = null;
 
-    #[Groups(["book:read","book:write","orderline:read","orderline:write","order:read","order:write"])]
+    #[Groups(["book:read", "book:write", "orderline:read", "orderline:write", "order:read", "order:write"])]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $author = null;
 
-    #[Groups(["book:read","book:write","orderline:read","orderline:write","order:read","order:write"])]
+    #[Groups(["book:read", "book:write", "orderline:read", "orderline:write", "order:read", "order:write"])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
-    #[Groups(["book:read","book:write","orderline:read","orderline:write","order:read","order:write"])]
+    #[Groups(["book:read", "book:write", "orderline:read", "orderline:write", "order:read", "order:write"])]
     #[ORM\Column]
     private ?string $image = null;
 
-    #[Groups(["book:read","book:write","orderline:read","orderline:write","order:read","order:write"])]
+    #[Groups(["book:read", "book:write", "orderline:read", "orderline:write", "order:read", "order:write"])]
     #[ORM\Column]
     private ?int $prix = null;
 
-    #[Groups(["book:read","book:write","orderline:read","orderline:write","order:read","order:write"])]
+    #[Groups(["book:read", "book:write", "orderline:read", "orderline:write", "order:read", "order:write"])]
     #[ORM\Column(length: 13, nullable: true)]
     private ?int $stock = null;
 
-    #[Groups(["book:read","book:write","orderline:read","orderline:write","order:read","order:write"])]
+    #[Groups(["book:read", "book:write", "orderline:read", "orderline:write", "order:read", "order:write"])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $isbn = null;
 
-    #[Groups(["book:read","book:write","orderline:read","orderline:write","order:read","order:write"])]
+    #[Groups(["book:read", "book:write", "orderline:read", "orderline:write", "order:read", "order:write"])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $genre = null;
 
-    #[Groups(["book:read","book:write","orderline:read","orderline:write","order:read","order:write"])]
+    #[Groups(["book:read", "book:write", "orderline:read", "orderline:write", "order:read", "order:write"])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $format = null;
 
-    #[Groups(["book:read","book:write","order:write"])]
+    #[Groups(["book:read", "book:write", "order:write"])]
     #[ORM\OneToMany(mappedBy: 'book', targetEntity: Orderline::class, cascade: ['persist'])]
     private Collection $orderlines;
 

@@ -22,12 +22,12 @@ class Orderline
     #[Groups(["orderline:read","orderline:write","order:read"])]
     private ?int $id = null;
     
-    #[Groups(["orderline:write"])]
+    #[Groups(["order:write", "order:read","orderline:write"])]
     #[ORM\ManyToOne(inversedBy:'orderlines',cascade:['persist'])]
     private ?Order $order = null;
    
     #[ORM\ManyToOne(inversedBy:'orderlines',cascade:['persist'])]
-    #[Groups(["orderline:write","orderline:read","order:read"])]
+    #[Groups(["order:write", "order:read","orderline:write","orderline:read"])]
     private ?Book $book = null;
 
     #[Groups(["orderline:read","orderline:write","order:read","order:write"])]
