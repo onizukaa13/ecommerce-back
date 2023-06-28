@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
@@ -19,19 +20,32 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
-    public function __construct(ManagerRegistry $registry)
+
+    private ?LoggerInterface $logger = null;
+
+    public function __construct(ManagerRegistry $registry, LoggerInterface $logger)
     {
+        dd("test !");
+        $this->logger = $logger;
         parent::__construct($registry, User::class);
     }
 
-    public function save(User $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->persist($entity);
+    // public function save(User $entity, bool $flush = false): void
+    // {
+    //     dd($entity);
+    //     $this->logger->info($entity->getId());
+    //     if ($entity->getId() == null || $entity->getId() == 0) {
+    //         $entity->setPassword(password_hash($entity->getPassword(), PASSWORD_DEFAULT));
+    //     }
+    //     dd($entity);
+    //     $this->logger->info($entity->getId());
 
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
+    //     $this->getEntityManager()->persist($entity);
+
+    //     if ($flush) {
+    //         $this->getEntityManager()->flush();
+    //     }
+    // }
 
     public function remove(User $entity, bool $flush = false): void
     {

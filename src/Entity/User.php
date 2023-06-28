@@ -7,15 +7,29 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use App\State\UserPasswordHasher;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
-#[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\Entity()]
 #[ORM\Table(name: '`user`')]
 #[ApiResource(
+    operations: [
+        new GetCollection(),
+        new Post(processor: UserPasswordHasher::class, validationContext: ['groups' => ['Default', 'user:create']]),
+        // new Get(),
+        new Put(processor: UserPasswordHasher::class),
+        new Patch(processor: UserPasswordHasher::class),
+        new Delete(),
+    ],
     normalizationContext: ["groups" => ["user:read"]],
     denormalizationContext: ["groups" => ["user:write"]]
 )]
@@ -131,9 +145,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setPassword(string $password): self
     {
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-        $this->password = $hashedPassword;
-
+        // $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        // $this->password = $hashedPassword;
+        $this->password = $password;
         return $this;
     }
 

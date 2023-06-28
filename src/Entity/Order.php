@@ -10,8 +10,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(
+    
     normalizationContext: ["groups" => ["order:read"]],
     denormalizationContext: ["groups" => ["order:write"]]
+    
 )]
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
 #[ORM\Table(name: '`order`')]
