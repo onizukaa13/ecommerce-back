@@ -65,6 +65,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(["user:read","user:write","order:write", "order:read","orderline:read","orderline:write"])]
     private ?string $firstname = null;
 
+   
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Order::class, cascade: ['persist'])]
     #[Groups(["user:read","user:write","orderline:read","orderline:write"])]
     private Collection $orders;

@@ -5,16 +5,30 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\OrderRepository;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Link;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource(
+#[ApiResource( 
     
     normalizationContext: ["groups" => ["order:read"]],
     denormalizationContext: ["groups" => ["order:write"]]
     
 )]
+
+#[ApiResource( 
+    uriTemplate: '/users/{id}/orders',
+    uriVariables: [
+    'id' => new Link(fromClass: User::class, fromProperty: 'orders')],
+    operations: [new GetCollection()]
+
+    )]
+    
+
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
 #[ORM\Table(name: '`order`')]
 class Order
